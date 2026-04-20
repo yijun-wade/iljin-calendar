@@ -293,8 +293,13 @@ html, body {
   font-weight: 700;
   letter-spacing: 0.12em;
 }
-.dv-meta-sep { color: var(--c-muted); }
-.dv-lunar    { color: var(--c-sub); }
+.dv-meta-sep  { color: var(--c-muted); }
+.dv-lunar     { color: var(--c-sub); }
+.dv-animal-name {
+  color: var(--c-ink);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
 .dv-son-tag  {
   color: var(--c-ink);
   font-weight: 700;

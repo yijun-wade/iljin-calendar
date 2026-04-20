@@ -42,11 +42,17 @@ export default function DayView({ date }) {
         </div>
       </div>
 
-      {/* 일진 · 음력 · 손없는날 태그 */}
+      {/* 일진 · 음력 · 동물이름 · 손없는날 태그 */}
       <div className="dv-meta-row">
         <span className="dv-ganji">{iljin.full}</span>
         <span className="dv-meta-sep">·</span>
         <span className="dv-lunar">음력 {son.lunarMonth}.{son.lunarDay}</span>
+        {animal && (
+          <>
+            <span className="dv-meta-sep">·</span>
+            <span className="dv-animal-name">{animal.name}</span>
+          </>
+        )}
         {son.isSonNone && (
           <>
             <span className="dv-meta-sep">·</span>
