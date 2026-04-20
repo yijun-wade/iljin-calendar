@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Assets Generator — 할머니집에 있는 그 달력</title>
+<style>
+  body { background:#111; color:#fff; font-family:sans-serif; padding:40px; display:flex; flex-direction:column; align-items:center; gap:48px; }
+  .section { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  h2 { margin:0; font-size:13px; color:#888; letter-spacing:0.05em; }
+  button { padding:10px 24px; font-size:14px; background:#1a1a1a; color:white; border:1px solid #444; border-radius:10px; cursor:pointer; margin-top:4px; }
+  button:hover { background:#333; }
+  canvas { max-width:100%; height:auto; border-radius:12px; }
+  .row { display:flex; gap:20px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+
+<div class="section">
+  <h2>앱 아이콘 (600×600) — 앱인토스 제출용</h2>
+  <canvas id="icon" width="600" height="600" style="width:200px;border-radius:32px"></canvas>
+  <button onclick="dl('icon','icon-600x600.png')">아이콘 다운로드</button>
+</div>
+
+<div class="section">
+  <h2>가로형 썸네일 (1932×828) — 앱스토어 배너</h2>
+  <canvas id="banner" width="1932" height="828" style="width:680px;border-radius:12px"></canvas>
+  <button onclick="dl('banner','thumbnail-1932x828.png')">썸네일 다운로드</button>
+</div>
+
+<div class="section">
+  <h2>스크린샷 (636×1048) — 3장</h2>
+  <div class="row">
+    <div class="col">
+      <canvas id="ss1" width="636" height="1048" style="width:180px;border-radius:12px"></canvas>
+      <button onclick="dl('ss1','screenshot-1.png')">1장</button>
+    </div>
+    <div class="col">
+      <canvas id="ss2" width="636" height="1048" style="width:180px;border-radius:12px"></canvas>
+      <button onclick="dl('ss2','screenshot-2.png')">2장</button>
+    </div>
+    <div class="col">
+      <canvas id="ss3" width="636" height="1048" style="width:180px;border-radius:12px"></canvas>
+      <button onclick="dl('ss3','screenshot-3.png')">3장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 공통 ── */
+function dl(id, fname) {
+  const a = document.createElement('a')
+  a.download = fname
+  a.href = document.getElementById(id).toDataURL('image/png')
+  a.click()
+}
+
+const INK   = '#1a1a1a'
+const WHITE = '#f7f5f2'
+const MUTED = '#9a9a9a'
+const LIGHT = '#ebebeb'
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + w - r, y)
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+  ctx.lineTo(x + w, y + h - r)
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+  ctx.lineTo(x + r, y + h)
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+  ctx.lineTo(x, y + r)
+  ctx.quadraticCurveTo(x, y, x + r, y)
+  ctx.closePath()
+}
+
+/* ── 아이콘 600×600 ── */
+function drawIcon() {
+  const c = document.getElementById('icon')
+  const ctx = c.getContext('2d')
+
+  // 배경
+  ctx.fillStyle = INK
+  roundRect(ctx, 0, 0, 600, 600, 100)
+  ctx.fill()
+
+  // 큰 날짜 숫자 (배경 느낌)
+  ctx.fillStyle = 'rgba(247,245,242,0.06)'
+  ctx.font = 'bold 500px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('日', 310, 310)
+
+  // 메인 日 한자
+  ctx.fillStyle = WHITE
+  ctx.font = 'bold 280px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('日', 300, 280)
+
+  // 하단 앱 이름 (작게)
+  ctx.fillStyle = 'rgba(247,245,242,0.5)'
+  ctx.font = '32px -apple-system, sans-serif'
+  ctx.fillText('할머니집에 있는 그 달력', 300, 520)
+}
+
+/* ── 썸네일 1932×828 ── */
+function drawBanner() {
+  const c = document.getElementById('banner')
+  const ctx = c.getContext('2d')
+  const W = 1932, H = 828
+
+  // 배경
+  ctx.fillStyle = WHITE
+  ctx.fillRect(0, 0, W, H)
+
+  // 왼쪽 검정 패널
+  ctx.fillStyle = INK
+  roundRect(ctx, 60, 60, 760, H - 120, 40)
+  ctx.fill()
+
+  // 왼쪽: 큰 날짜 숫자
+  ctx.fillStyle = WHITE
+  ctx.font = 'bold 380px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('11', 440, 380)
+
+  // 왼쪽 상단 코너 박스들
+  // 월 박스
+  ctx.strokeStyle = WHITE
+  ctx.lineWidth = 3
+  roundRect(ctx, 100, 100, 100, 80, 10)
+  ctx.stroke()
+  ctx.fillStyle = WHITE
+  ctx.font = 'bold 36px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('4', 150, 140)
+  ctx.font = '22px sans-serif'
+  ctx.fillStyle = 'rgba(247,245,242,0.6)'
+  ctx.fillText('APR', 150, 165)
+
+  // 요일 박스
+  ctx.strokeStyle = WHITE
+  ctx.lineWidth = 3
+  roundRect(ctx, 620, 100, 100, 80, 10)
+  ctx.stroke()
+  ctx.fillStyle = WHITE
+  ctx.font = 'bold 50px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('日', 670, 152)
+
+  // 하단 일진 텍스트
+  ctx.fillStyle = 'rgba(247,245,242,0.6)'
+  ctx.font = '28px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('甲子 · 음력 3.14 · 쥐', 440, 670)
+
+  // 오른쪽: 텍스트 영역
+  const rx = 900
+
+  ctx.fillStyle = 'rgba(26,26,26,0.25)'
+  ctx.font = '36px sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('전통 음양력 달력', rx, 200)
+
+  ctx.fillStyle = INK
+  ctx.font = 'bold 88px Georgia, serif'
+  ctx.fillText('할머니집에', rx, 320)
+  ctx.fillText('있는 그 달력', rx, 430)
+
+  ctx.fillStyle = MUTED
+  ctx.font = '40px sans-serif'
+  ctx.fillText('일진 · 손없는날 · 띠동물', rx, 530)
+  ctx.fillText('이사날 · 결혼날 · 개업날 찾기', rx, 585)
+
+  // 손없는날 태그 (pill)
+  ctx.fillStyle = INK
+  roundRect(ctx, rx, 640, 310, 60, 30)
+  ctx.fill()
+  ctx.fillStyle = WHITE
+  ctx.font = 'bold 32px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('손없는날 바로 찾기', rx + 155, 678)
+}
+
+/* ── 스크린샷 공통 프레임 ── */
+function phoneFrame(ctx, W, H) {
+  // 흰 배경
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, W, H)
+  // 상단 상태바 느낌
+  ctx.fillStyle = '#f7f5f2'
+  ctx.fillRect(0, 0, W, 40)
+}
+
+function topBar(ctx, W, monthNum, monthEn, year, dowChar, dowColor) {
+  const padX = 40, top = 80
+
+  // 월 박스
+  ctx.strokeStyle = INK
+  ctx.lineWidth = 2.5
+  roundRect(ctx, padX, top, 100, 80, 10)
+  ctx.stroke()
+  ctx.fillStyle = INK
+  ctx.font = 'bold 32px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(monthNum, padX + 50, top + 35)
+  ctx.font = '18px sans-serif'
+  ctx.fillStyle = '#666'
+  ctx.fillText(monthEn, padX + 50, top + 62)
+
+  // 연도
+  ctx.fillStyle = MUTED
+  ctx.font = '22px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(year, W / 2, top + 50)
+
+  // 요일 박스
+  ctx.strokeStyle = dowColor
+  ctx.lineWidth = 2.5
+  roundRect(ctx, W - padX - 100, top, 100, 80, 10)
+  ctx.stroke()
+  ctx.fillStyle = dowColor
+  ctx.font = 'bold 48px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(dowChar, W - padX - 50, top + 58)
+}
+
+/* ── 스크린샷 1: 일진 메인 화면 ── */
+function drawSS1() {
+  const c = document.getElementById('ss1')
+  const ctx = c.getContext('2d')
+  const W = 636, H = 1048
+
+  phoneFrame(ctx, W, H)
+
+  // 상단 타이틀
+  ctx.fillStyle = MUTED
+  ctx.font = '26px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('할머니집에서 본 그 달력', W / 2, 55)
+
+  // 코너 박스 바
+  topBar(ctx, W, '4', 'APR', '2026', '日', '#c0392b')
+
+  // 큰 날짜
+  ctx.fillStyle = INK
+  ctx.font = 'bold 320px Georgia, serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('20', 50, 560)
+
+  // 동물 자리 (원 placeholder)
+  ctx.strokeStyle = LIGHT
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.arc(490, 500, 80, 0, Math.PI * 2)
+  ctx.stroke()
+  ctx.fillStyle = MUTED
+  ctx.font = '64px serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('🐲', 490, 528)
+
+  // 메타 행
+  ctx.fillStyle = INK
+  ctx.font = 'bold 28px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('甲辰', W / 2 - 100, 630)
+  ctx.fillStyle = MUTED
+  ctx.fillText('·', W / 2 - 20, 630)
+  ctx.fillStyle = '#666'
+  ctx.font = '28px Georgia, serif'
+  ctx.fillText('음력 3.23', W / 2 + 60, 630)
+  ctx.fillStyle = '#666'
+  ctx.fillText('· 용', W / 2 + 180, 630)
+
+  // 손있는날 카드
+  ctx.strokeStyle = LIGHT
+  ctx.lineWidth = 1.5
+  roundRect(ctx, 40, 660, W - 80, 100, 16)
+  ctx.stroke()
+  ctx.fillStyle = '#f7f5f2'
+  roundRect(ctx, 40, 660, W - 80, 100, 16)
+  ctx.fill()
+  ctx.fillStyle = '#888'
+  ctx.font = 'bold 26px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('손 있 는 날', W / 2 - 60, 718)
+  ctx.fillStyle = MUTED
+  ctx.font = '22px sans-serif'
+  ctx.fillText('음력 3.23', W / 2 + 80, 718)
+
+  // 일진
+  ctx.strokeStyle = LIGHT
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(40, 790)
+  ctx.lineTo(W - 40, 790)
+  ctx.stroke()
+  ctx.fillStyle = INK
+  ctx.font = 'bold 52px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('甲辰', W / 2 - 60, 860)
+  ctx.fillStyle = MUTED
+  ctx.font = '28px sans-serif'
+  ctx.fillText('갑진일', W / 2 + 60, 860)
+}
+
+/* ── 스크린샷 2: 손없는날 ── */
+function drawSS2() {
+  const c = document.getElementById('ss2')
+  const ctx = c.getContext('2d')
+  const W = 636, H = 1048
+
+  phoneFrame(ctx, W, H)
+
+  ctx.fillStyle = MUTED
+  ctx.font = '26px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('할머니집에서 본 그 달력', W / 2, 55)
+
+  topBar(ctx, W, '4', 'APR', '2026', '火', INK)
+
+  // 큰 날짜
+  ctx.fillStyle = INK
+  ctx.font = 'bold 320px Georgia, serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('1', 120, 560)
+
+  // 동물
+  ctx.fillStyle = MUTED
+  ctx.font = '80px serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('🐭', 490, 520)
+
+  // 메타 행
+  ctx.fillStyle = INK
+  ctx.font = 'bold 28px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('壬子', W / 2 - 130, 630)
+  ctx.fillStyle = MUTED
+  ctx.fillText('·', W / 2 - 45, 630)
+  ctx.fillStyle = '#666'
+  ctx.font = '28px Georgia, serif'
+  ctx.fillText('음력 3.4', W / 2 + 40, 630)
+  ctx.fillStyle = '#666'
+  ctx.fillText('· 쥐', W / 2 + 160, 630)
+
+  // 손없는날 카드
+  ctx.fillStyle = '#f7f5f2'
+  roundRect(ctx, 40, 660, W - 80, 130, 16)
+  ctx.fill()
+  ctx.strokeStyle = INK
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  ctx.moveTo(40, 676)
+  ctx.lineTo(40, 776)
+  ctx.stroke()
+  ctx.strokeStyle = LIGHT
+  ctx.lineWidth = 1
+  roundRect(ctx, 40, 660, W - 80, 130, 16)
+  ctx.stroke()
+
+  // 吉 도장
+  ctx.fillStyle = INK
+  ctx.beginPath()
+  ctx.arc(110, 725, 36, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = WHITE
+  ctx.font = 'bold 40px Georgia, serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('吉', 110, 738)
+
+  ctx.fillStyle = INK
+  ctx.font = 'bold 30px Georgia, serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('손 없 는 날', 165, 705)
+  ctx.fillStyle = '#666'
+  ctx.font = '23px sans-serif'
+  ctx.fillText('이사 · 결혼 · 개업에 좋은 날', 165, 738)
+  ctx.fillStyle = MUTED
+  ctx.font = '20px sans-serif'
+  ctx.fillText('귀신이 쉬는 날', 165, 768)
+}
+
+/* ── 스크린샷 3: 주간 스트립 ── */
+function drawSS3() {
+  const c = document.getElementById('ss3')
+  const ctx = c.getContext('2d')
+  const W = 636, H = 1048
+
+  phoneFrame(ctx, W, H)
+
+  ctx.fillStyle = MUTED
+  ctx.font = '26px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('할머니집에서 본 그 달력', W / 2, 55)
+
+  // WeekStrip 헤더
+  ctx.fillStyle = INK
+  ctx.font = 'bold 44px Georgia, serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('2026년 4월', 50, 130)
+
+  // 7일 타일
+  const days   = ['일','월','화','수','목','금','토']
+  const nums   = [19, 20, 21, 22, 23, 24, 25]
+  const animals = ['🐲','🐍','🐴','🐑','🐒','🐓','🐶']
+  const tileW  = (W - 60) / 7
+  const tileX  = 30
+
+  days.forEach((d, i) => {
+    const x = tileX + i * tileW
+    const isSelected = i === 1  // 20일 선택
+    const isSun = i === 0
+    const isSat = i === 6
+    const isSon = i === 0 || i === 1 // 손없는날
+
+    // 타일 배경
+    if (isSelected) {
+      ctx.fillStyle = INK
+      roundRect(ctx, x + 3, 150, tileW - 6, 140, 14)
+      ctx.fill()
+    } else if (isSon) {
+      ctx.fillStyle = '#f0f0f0'
+      roundRect(ctx, x + 3, 150, tileW - 6, 140, 14)
+      ctx.fill()
+    }
+
+    // 요일
+    ctx.fillStyle = isSelected ? 'rgba(255,255,255,0.6)' : isSun ? '#c0392b' : isSat ? '#2563eb' : MUTED
+    ctx.font = 'bold 18px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(d, x + tileW / 2, 178)
+
+    // 숫자
+    ctx.fillStyle = isSelected ? '#fff' : isSun ? '#c0392b' : isSat ? '#2563eb' : INK
+    ctx.font = 'bold 38px Georgia, serif'
+    ctx.fillText(nums[i], x + tileW / 2, 220)
+
+    // 동물
+    ctx.font = '28px serif'
+    ctx.fillText(animals[i], x + tileW / 2, 258)
+
+    // 손없는날 도트
+    if (isSon && !isSelected) {
+      ctx.fillStyle = INK
+      ctx.beginPath()
+      ctx.arc(x + tileW / 2, 278, 4, 0, Math.PI * 2)
+      ctx.fill()
+    }
+  })
+
+  // 구분선
+  ctx.strokeStyle = LIGHT
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(30, 308)
+  ctx.lineTo(W - 30, 308)
+  ctx.stroke()
+
+  // 아래쪽은 선택된 날 미리보기
+  topBar(ctx, W, '4', 'APR', '2026', '月', INK)
+
+  // 큰 숫자
+  ctx.fillStyle = INK
+  ctx.font = 'bold 320px Georgia, serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('20', 50, 760)
+
+  ctx.fillStyle = MUTED
+  ctx.font = '80px serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('🐍', 510, 700)
+
+  ctx.fillStyle = '#666'
+  ctx.font = '26px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('甲辰 · 음력 3.23 · 뱀', W / 2, 830)
+}
+
+/* ── 실행 ── */
+drawIcon()
+drawBanner()
+drawSS1()
+drawSS2()
+drawSS3()
+</script>
+</body>
+</html>
