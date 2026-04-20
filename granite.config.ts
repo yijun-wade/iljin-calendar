@@ -5,8 +5,7 @@ export default defineConfig({
   brand: {
     displayName: '할머니집에 있는 그 달력',
     primaryColor: '#1a1a1a',
-    // TODO: Vercel 첫 배포 후 실제 URL로 교체
-    icon: 'https://raw.githubusercontent.com/yijun-wade/iljin-calendar/main/public/icon.png',
+    icon: 'https://raw.githubusercontent.com/yijun-wade/iljin-calendar/main/public/icon.svg',
   },
   web: {
     host: 'localhost',
